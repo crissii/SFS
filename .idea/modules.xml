@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SFS.iml" filepath="$PROJECT_DIR$/SFS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dataserver/dataserver.iml" filepath="$PROJECT_DIR$/dataserver/dataserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nameserver/nameserver.iml" filepath="$PROJECT_DIR$/nameserver/nameserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/requestAPI/requestAPI.iml" filepath="$PROJECT_DIR$/requestAPI/requestAPI.iml" />
+    </modules>
+  </component>
+</project>
+
