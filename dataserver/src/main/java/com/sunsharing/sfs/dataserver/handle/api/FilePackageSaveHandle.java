@@ -86,6 +86,9 @@ public class FilePackageSaveHandle implements Handle {
                 if(isSuccess)
                 {
                     //4.发现所有都成功，向所有服务器发布更新索引的信息
+                    //更新package的状态
+                    BlockWrite.getInstance().updatePackage0(filePakageSave.getBlockId(),
+                            filePakageSave.getTotalPakage());
                     List<DistributeCall> indexCalls = new ArrayList<DistributeCall>();
                     long[] beforeIndex = BlockWrite.getInstance().getBeforeIndex(filePakageSave.getBlockId());
                     for(int i=0;i<dataServers.length;i++)
@@ -98,8 +101,16 @@ public class FilePackageSaveHandle implements Handle {
                         index.setTotalSize(filePakageSave.getTotalSize());
                         index.setFileName(filePakageSave.getFileName());
                         index.setMessageId(StringUtils.generateUUID());
+                        index.setExtendSize(filePakageSave.getExtendFileSize());
+                        if(filePakageSave.getOldBlockIndex()!=0)
+                        {
+                            index.setUpdateFile(true);
+                            index.setOldFileSize(filePakageSave.getOldFilesize());
+                            index.setOldExtendFile(filePakageSave.getOldExtendFileSize());
+                        }
+
                         FilePackageUpdateIndexThread t = new FilePackageUpdateIndexThread(
-                               index ,beforeIndex,ip,msgPort
+                               index ,beforeIndex,ip,msgPort,filePakageSave
                         );
                         indexCalls.add(t);
                     }
@@ -115,6 +126,15 @@ public class FilePackageSaveHandle implements Handle {
                             uploadIndex.setFileSize(filePakageSave.getTotalSize());
                             uploadIndex.setBlockIndex(beforeIndex[0]);
                             uploadIndex.setFilename(filePakageSave.getFileName());
+                            uploadIndex.setExtendFileSize(filePakageSave.getExtendFileSize());
+                            if(filePakageSave.getOldBlockIndex()!=0)
+                            {
+                                uploadIndex.setUpdateFile(true);
+                                uploadIndex.setOldFileSize(filePakageSave.getOldFilesize());
+                                uploadIndex.setOldExt(filePakageSave.getOldExtendFileSize());
+                            }
+
+
                             FileSuccessUploadIndexResult uploadResult =
                                     (FileSuccessUploadIndexResult)nettyClient.request(uploadIndex,Config.nameServerIp,new Integer(Config.nameServerPort),5000);
                             if(!uploadResult.isStatus())

@@ -21,7 +21,6 @@ public class BlockInfoWrite {
     public long getWriteBlockInfoBefore(int blockId)
     {
         String contextPath = Config.getContextPath();
-        File blockInfoDir = new File(contextPath+"blockinfo");
         File blockInfo = new File(contextPath+"blockinfo/"+blockId);
         if(blockInfo.isFile())
         {
@@ -89,7 +88,8 @@ public class BlockInfoWrite {
                     {
                         long blockIndex = raf1.readLong();
                         long filesize = raf1.readLong();
-                        block.loadFile(buffer,blockIndex,filesize);
+                        long extendfile = raf1.readLong();
+                        block.loadFile(buffer,blockIndex,filesize,extendfile);
                         size++;
                         if(size%10000==0 && size!=0)
                         {
@@ -131,7 +131,97 @@ public class BlockInfoWrite {
         }
     }
 
-    public void writeBlockInfo(int blockId,String fileName,long index,long length)
+    public void rollbackUpdateFile(int blockId,String fileName,long oldFileSize,long oldExtend)
+    {
+        String contextPath = Config.getContextPath();
+        File blockInfo = new File(contextPath+"blockinfo/"+blockId);
+        Block block = BlockCache.getBlockById(blockId);
+
+        GetFileName getFileName = new GetFileName();
+        //12位
+        byte[] arr = getFileName.decodeFile(fileName);
+
+        if(blockInfo.isFile())
+        {
+            RandomAccessFile raf1 = null;
+            try
+            {
+                raf1 = new RandomAccessFile(blockInfo,"r");
+                byte[] buffer = new byte[12];
+                while(raf1.read(buffer)!=-1)
+                {
+                    if(new String(buffer).equals(new String(arr)))
+                    {
+                        long blockIndex = raf1.readLong();
+                        raf1.write(ByteUtils.longToBytes(oldFileSize));
+                        raf1.write(ByteUtils.longToBytes(oldExtend));
+                        break;
+                    }
+                }
+            }catch (Exception e)
+            {
+                logger.error("写消息文件出错", e);
+                throw new RuntimeException("获取blockId出错");
+            }finally {
+                try
+                {
+                    raf1.close();
+                }catch (Exception e)
+                {
+
+                }
+            }
+        }
+    }
+
+    public void updateBlockInfo(int blockId,String fileName,long filesize)
+    {
+        String contextPath = Config.getContextPath();
+            File blockInfo = new File(contextPath+"blockinfo/"+blockId);
+            Block block = BlockCache.getBlockById(blockId);
+
+        GetFileName getFileName = new GetFileName();
+        //12位
+        byte[] arr = getFileName.decodeFile(fileName);
+        byte[] fileInfo = block.getFileInfo(ByteUtils.getLong(arr,0));
+            if(blockInfo.isFile())
+            {
+                RandomAccessFile raf1 = null;
+                try
+                {
+                    raf1 = new RandomAccessFile(blockInfo,"rw");
+                    byte[] buffer = new byte[12];
+                    while(raf1.read(buffer)!=-1)
+                    {
+                        if(new String(buffer).equals(new String(arr)))
+                        {
+                            long blockIndex = raf1.readLong();
+                            long oldFilesize = ByteUtils.getLong(fileInfo, 8);
+                            long oldExtendSize = ByteUtils.getLong(fileInfo,16);
+                            long newEx = oldExtendSize - (filesize-oldFilesize);
+                            raf1.write(ByteUtils.longToBytes(filesize));
+                            raf1.write(ByteUtils.longToBytes(newEx));
+                            break;
+                        }
+                    }
+                }catch (Exception e)
+                {
+                    logger.error("写消息文件出错", e);
+                    throw new RuntimeException("获取blockId出错");
+                }finally {
+                    try
+                    {
+                        raf1.close();
+                    }catch (Exception e)
+                    {
+
+                    }
+                }
+            }
+
+    }
+
+    public void writeBlockInfo(int blockId,String fileName,long index,long length,long extendlength)
     {
         String contextPath = Config.getContextPath();
         File blockInfoDir = new File(contextPath+"blockinfo");
@@ -152,6 +242,7 @@ public class BlockInfoWrite {
             raf1.write(arr);
             raf1.writeLong(index);
             raf1.writeLong(length);
+            raf1.writeLong(extendlength);
         }catch (Exception e)
         {
             logger.error("写消息文件出错", e);

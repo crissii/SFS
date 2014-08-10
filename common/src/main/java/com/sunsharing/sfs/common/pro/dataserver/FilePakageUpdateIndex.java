@@ -15,7 +15,39 @@ public class FilePakageUpdateIndex extends JsonBodyProtocol {
 
     long totalSize;
 
+    long extendSize;
+
     String fileName;
+
+    boolean updateFile = false;
+
+    long oldFileSize=0;
+
+    long oldExtendFile = 0;
+
+    public long getOldFileSize() {
+        return oldFileSize;
+    }
+
+    public void setOldFileSize(long oldFileSize) {
+        this.oldFileSize = oldFileSize;
+    }
+
+    public long getOldExtendFile() {
+        return oldExtendFile;
+    }
+
+    public void setOldExtendFile(long oldExtendFile) {
+        this.oldExtendFile = oldExtendFile;
+    }
+
+    public boolean isUpdateFile() {
+        return updateFile;
+    }
+
+    public void setUpdateFile(boolean updateFile) {
+        this.updateFile = updateFile;
+    }
 
     public int getBlockId() {
         return blockId;
@@ -39,5 +71,13 @@ public class FilePakageUpdateIndex extends JsonBodyProtocol {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public long getExtendSize() {
+        return extendSize;
+    }
+
+    public void setExtendSize(long extendSize) {
+        this.extendSize = extendSize;
     }
 }

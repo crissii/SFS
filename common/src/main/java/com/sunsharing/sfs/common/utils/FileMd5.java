@@ -82,6 +82,7 @@ public class FileMd5 {
      * @throws java.io.IOException
      */
     public static synchronized String getFileMD5String(File file,long position,long length) throws IOException {
+        logger.info(file.getName()+":po:"+position+":len:"+length);
         FileInputStream in = null;
         try
         {

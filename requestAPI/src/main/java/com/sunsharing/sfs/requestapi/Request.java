@@ -84,7 +84,17 @@ public class Request {
         }
     }
 
-    public String request(File file,String ip,int port,int timeout)
+    public String updateFile(File file,String updateFilename,String ip,int port,int timeout)
+    {
+        return request(file,updateFilename,0,ip,port,timeout);
+    }
+
+    public String addFile(File file,long extendLength,String ip,int port,int timeout)
+    {
+        return request(file,null,extendLength,ip,port,timeout);
+    }
+
+    private String request(File file,String updateFilename,long extendLength,String ip,int port,int timeout)
     {
         long fileLen = file.length();
         ProClassCache.init();
@@ -94,6 +104,14 @@ public class Request {
         {
             WriteRequest request = new WriteRequest();
             request.setFilesize(fileLen);
+            if(StringUtils.isBlank(updateFilename))
+            {
+                request.setExtendfilesize(extendLength);
+            }else
+            {
+                request.setFilename(updateFilename);
+            }
+
             WriteRequestResult result = (WriteRequestResult)
             client.request(request, ip, port, 10000);
             //result.print();
@@ -115,14 +133,23 @@ public class Request {
                 }
                 toalPakage = 1;
 
+                String fileName = "";
+
                 GetFileName getFileName = new GetFileName();
-                String fileName = getFileName.fileName(file.getName());
+                if(StringUtils.isBlank(updateFilename))
+                {
+
+                    fileName = getFileName.fileName(file.getName());
+                }else
+                {
+                    fileName = getFileName.decodeFile2Str(updateFilename);
+                }
 
                 ArrayList<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
                 for(int i=1;i<=toalPakage;i++)
                 {
                     FilePackageCall call = new FilePackageCall(file,i,toalPakage,fileLen,
-                            fileName,result,timeout);
+                            fileName,result,timeout,request.getExtendfilesize());
                     results.add(exec.submit(call));
                 }
                 boolean allSuccess = true;
@@ -184,10 +211,10 @@ public class Request {
 //            {
 //                try
 //                {
-////                    Request r = new Request();
-////                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-////                    r.read("1112aAGXZXqdkoY.txt",bytes,"localhost",1320);
-////                    System.out.println(new String(bytes.toByteArray(),"UTF-8"));
+//                    Request r = new Request();
+//                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//                    r.read("1112aAGXZXqdkoY.txt",bytes,"localhost",1320);
+//                    System.out.println(new String(bytes.toByteArray(),"UTF-8"));
 //                    File f = new File("/Users/criss/Desktop/file/1.txt");
 //                    Request r = new Request();
 //                    String filename = r.request(f,"localhost",1320,1000000);
@@ -198,44 +225,62 @@ public class Request {
 //                }
 //            }
 //        };
+//        for(int i=0;i<1;i++)
+//        {
+        //1112SorHNvN9kPx.txt
+             File f = new File("/Users/criss/Desktop/file/1.txt");
+             Request r = new Request();
+            // String filename = r.addFile(f,2,"localhost",1320,1000000);
+            // String filename = r.updateFile(f,"1112SorHNvN9kPx.txt","localhost",1320,100000);
+             //System.out.println("~~~~~~~~~:"+filename);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            r.read("1112SorHNvN9kPx.txt",out,"localhost",1320);
+            System.out.println(new String(out.toByteArray())+"AAAA");
+//        }
+
 //
 //        for(int i=0;i<1;i++)
 //        {
 //            service.execute(r);
 //        }
 
-        File f = new File("/Users/criss/Desktop/file/name1/block/1");
-        RandomAccessFile raf1 = null;
-        try
-        {
-            raf1 = new RandomAccessFile(f,"r");
-            raf1.seek(64*1024*1024L+8);
-            long len = raf1.readLong();
-            System.out.println(len);
-            int intlen = raf1.readInt();
-            System.out.println(intlen);
-             len = raf1.readLong();
-            System.out.println(len);
-             len = raf1.readLong();
-            System.out.println(len);
-            byte[] tt = Base58.decode("111kAXhG2qt8zk");
-            long tt2 = ByteUtils.getLong(tt,4);
-            System.out.println(tt2);
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-            //logger.error("读block出错", e);
-            //throw new RuntimeException("读取blockId出错,blockId:"+blockId+":"+e.getMessage());
-        }finally {
-            try
-            {
-                raf1.close();
-            }catch (Exception e)
-            {
-
-            }
-        }
-
+//        File f = new File("/Users/criss/Desktop/file/name1/block/1");
+//        RandomAccessFile raf1 = null;
+//        try
+//        {
+//            raf1 = new RandomAccessFile(f,"r");
+//            raf1.seek(64*1024*1024L);
+//            long len = raf1.readLong();
+//            System.out.println(len);
+//            byte[] at  = new byte[12];
+//            int intlen = raf1.read(at);
+//
+//           // getFileName.getReturnFileName(file.getName(),result.getBlockId(),fileName);
+//            //System.out.println(intlen);
+//             len = raf1.readLong();
+//            System.out.println(len);
+//             len = raf1.readLong();
+//            System.out.println(len);
+//            len = raf1.readLong();
+//            System.out.println(len);
+////            byte[] tt = Base58.decode("111kAXhG2qt8zk");
+////            long tt2 = ByteUtils.getLong(tt,4);
+////            System.out.println(tt2);
+//        }catch (Exception e)
+//        {
+//            e.printStackTrace();
+//            //logger.error("读block出错", e);
+//            //throw new RuntimeException("读取blockId出错,blockId:"+blockId+":"+e.getMessage());
+//        }finally {
+//            try
+//            {
+//                raf1.close();
+//            }catch (Exception e)
+//            {
+//
+//            }
+//        }
+//
     }
 
 }

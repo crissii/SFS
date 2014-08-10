@@ -16,6 +16,46 @@ public class FilePakageUpdateIndexRollBack extends JsonBodyProtocol {
 
     private int blockId;
 
+    private String filename;
+
+    private boolean updateFile =false;
+
+    private long oldFileSize = 0;
+
+    private long oldExtendFile = 0;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public boolean isUpdateFile() {
+        return updateFile;
+    }
+
+    public void setUpdateFile(boolean isUpdateFile) {
+        this.updateFile = isUpdateFile;
+    }
+
+    public long getOldFileSize() {
+        return oldFileSize;
+    }
+
+    public void setOldFileSize(long oldFileSize) {
+        this.oldFileSize = oldFileSize;
+    }
+
+    public long getOldExtendFile() {
+        return oldExtendFile;
+    }
+
+    public void setOldExtendFile(long oldExtendFile) {
+        this.oldExtendFile = oldExtendFile;
+    }
+
     public long getBlockIndx() {
         return blockIndx;
     }

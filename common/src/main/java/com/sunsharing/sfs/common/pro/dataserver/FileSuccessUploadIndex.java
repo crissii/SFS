@@ -18,6 +18,45 @@ public class FileSuccessUploadIndex extends JsonBodyProtocol {
 
     long fileSize;
 
+    long extendFileSize;
+
+    boolean updateFile = false;
+
+    long oldFileSize;
+
+    long oldExt;
+
+    public long getOldFileSize() {
+        return oldFileSize;
+    }
+
+    public void setOldFileSize(long oldFileSize) {
+        this.oldFileSize = oldFileSize;
+    }
+
+    public long getOldExt() {
+        return oldExt;
+    }
+
+    public void setOldExt(long oldExt) {
+        this.oldExt = oldExt;
+    }
+
+    public boolean isUpdateFile() {
+        return updateFile;
+    }
+
+    public void setUpdateFile(boolean updateFile) {
+        this.updateFile = updateFile;
+    }
+
+    public long getExtendFileSize() {
+        return extendFileSize;
+    }
+
+    public void setExtendFileSize(long extendFileSize) {
+        this.extendFileSize = extendFileSize;
+    }
 
     public int getBlockId() {
         return blockId;

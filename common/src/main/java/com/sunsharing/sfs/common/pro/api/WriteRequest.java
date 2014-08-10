@@ -11,6 +11,12 @@ import com.sunsharing.sfs.common.pro.ano.Protocol;
 @Protocol(action = Constant.WRITE_REQUEST)
 public class WriteRequest extends JsonBodyProtocol {
     long filesize = 0;
+    /**
+     * 扩展大小,用于更新
+     */
+    long extendfilesize = 0;
+
+    String filename="";
 
     public long getFilesize() {
         return filesize;
@@ -20,4 +26,19 @@ public class WriteRequest extends JsonBodyProtocol {
         this.filesize = filesize;
     }
 
+    public long getExtendfilesize() {
+        return extendfilesize;
+    }
+
+    public void setExtendfilesize(long extendfilesize) {
+        this.extendfilesize = extendfilesize;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 }

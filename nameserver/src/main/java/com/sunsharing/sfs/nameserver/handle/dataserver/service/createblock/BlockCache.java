@@ -100,6 +100,11 @@ public class BlockCache {
         return null;
     }
 
+    public static int getBlockSize()
+    {
+        return blocks.size();
+    }
+
 
     public synchronized static Block addBlock(int blockId,int[] dataserver)
     {

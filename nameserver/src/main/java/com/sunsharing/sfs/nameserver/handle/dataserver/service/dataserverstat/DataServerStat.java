@@ -213,6 +213,11 @@ public class DataServerStat {
         }
     }
 
+    public  long getlastUpdateTime()
+    {
+        return lastUpdateTime;
+    }
+
 
 
 
@@ -245,6 +250,11 @@ public class DataServerStat {
             }
         },30,30, TimeUnit.SECONDS);
 
+    }
+
+    public static List<DataServerStat> getDataServerStats()
+    {
+        return dataServers;
     }
 
 

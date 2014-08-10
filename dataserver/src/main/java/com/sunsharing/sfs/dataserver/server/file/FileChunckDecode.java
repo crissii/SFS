@@ -1,7 +1,6 @@
 package com.sunsharing.sfs.dataserver.server.file;
 
 import com.sunsharing.sfs.common.pro.BaseProtocol;
-import com.sunsharing.sfs.common.pro.JsonBodyProtocol;
 import com.sunsharing.sfs.common.pro.ProFactory;
 import com.sunsharing.sfs.common.pro.api.FilePakageSave;
 import com.sunsharing.sfs.common.utils.FileMd5;
@@ -12,7 +11,6 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.replay.ReplayingDecoder;
 
-import java.io.File;
 import java.io.RandomAccessFile;
 
 /**
@@ -49,8 +47,16 @@ public class FileChunckDecode  extends ReplayingDecoder<FileChunckDecode.State> 
                         raf = BlockWrite.getInstance().openBlock(fs.getBlockId());
                         //raf.seek(64*1024*1024L);
                         //读取前八位
-                        currentWriteLen = raf.readLong();
-                        if(currentWriteLen+fs.getTotalSize()>=64*1024*1024L)
+                        if(fs.getOldBlockIndex()==0)
+                        {
+                            //新增
+                            currentWriteLen = raf.readLong();
+                        }else
+                        {
+                            //更新文件
+                            currentWriteLen = fs.getOldBlockIndex();
+                        }
+                        if(currentWriteLen+fs.getTotalSize()+fs.getExtendFileSize()>=64*1024*1024L)
                         {
                             ((FilePakageSave) pro).setFileDoSuccess(false);
                             ((FilePakageSave) pro).setErrorMsg("无法写Block文件:"+fs.getBlockId()+"超过64M文件长度");
@@ -84,7 +90,8 @@ public class FileChunckDecode  extends ReplayingDecoder<FileChunckDecode.State> 
                     currentChunkSize = Math.min(maxCanRead, currentChunkSize);
 
                     try{
-                        raf.write(buffer.readBytes((int)currentChunkSize).array());
+                        byte[] bu = buffer.readBytes((int)currentChunkSize).array();
+                        raf.write(bu);
                         fs.increate(currentChunkSize);
                     }catch(Exception e){
                         logger.error("接收错误,blockId:"+fs.getBlockId(),e);
@@ -105,7 +112,8 @@ public class FileChunckDecode  extends ReplayingDecoder<FileChunckDecode.State> 
                             String md5 = FileMd5.getFileMD5String(BlockWrite.getInstance().getBlockFile(fs.getBlockId()),
                                     currentWriteLen+((FilePakageSave) pro).getFromIndex(), currentChunkSize);
                             logger.info("包序号:"+((FilePakageSave) pro).getCurrentPakage()+"," +
-                                    "源Md5:"+(((FilePakageSave) pro).getMd5())+",目的Md5:"+md5);
+                                    "源Md5:"+(((FilePakageSave) pro).getMd5())+",目的Md5:"+md5+":currentWriteLen:"+currentWriteLen+"" +
+                                    ":currentChunkSize"+currentChunkSize+":fromeIndex:"+((FilePakageSave) pro).getFromIndex());
                             if(!md5.equals(((FilePakageSave) pro).getMd5()))
                             {
                                 ((FilePakageSave) pro).setFileDoSuccess(false);

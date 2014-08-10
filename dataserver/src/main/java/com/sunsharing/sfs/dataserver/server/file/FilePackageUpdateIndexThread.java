@@ -3,6 +3,7 @@ package com.sunsharing.sfs.dataserver.server.file;
 import com.sunsharing.component.utils.base.StringUtils;
 import com.sunsharing.sfs.common.distribute.DistributeCall;
 import com.sunsharing.sfs.common.netty.LongNettyClient;
+import com.sunsharing.sfs.common.pro.api.FilePakageSave;
 import com.sunsharing.sfs.common.pro.dataserver.FilePakageUpdateIndex;
 import com.sunsharing.sfs.common.pro.dataserver.FilePakageUpdateIndexResult;
 import com.sunsharing.sfs.common.pro.dataserver.FilePakageUpdateIndexRollBack;
@@ -21,13 +22,15 @@ public class FilePackageUpdateIndexThread implements DistributeCall {
     long [] sourceIndex;
     String ip;
     String port;
+    FilePakageSave fs;
 
-    public FilePackageUpdateIndexThread(FilePakageUpdateIndex index,long[] arr,String ip,String port)
+    public FilePackageUpdateIndexThread(FilePakageUpdateIndex index,long[] arr,String ip,String port,FilePakageSave fs)
     {
         this.index = index;
         this.sourceIndex = arr;
         this.ip = ip;
         this.port = port;
+        this.fs = fs;
     }
 
 
@@ -66,6 +69,13 @@ public class FilePackageUpdateIndexThread implements DistributeCall {
                     rollBack.setMessageId(StringUtils.generateUUID());
                     rollBack.setBlockIndx(sourceIndex[0]);
                     rollBack.setInfoIndx(sourceIndex[1]);
+                    if(fs.getOldBlockIndex()!=0)
+                    {
+                        rollBack.setUpdateFile(true);
+                        rollBack.setOldFileSize(fs.getOldFilesize());
+                        rollBack.setOldExtendFile(fs.getOldExtendFileSize());
+                        rollBack.setFilename(fs.getFileName());
+                    }
                     client.requestNoRes(rollBack, ip, new Integer(port));
                 }catch (Exception e)
                 {

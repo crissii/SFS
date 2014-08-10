@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        body{
+            font-size:12px;
+            font-family:"宋体",HELVETICA;
+        }
+    </style>
+    <script src="jquery-1.7.2.min.js"></script>
+</head>
+<body>
+    <div id="rows" style="width: 500px;height: 500px;color: #ffffff;background: #000;padding: 10px;overflow: auto">
+        <div class="row">
+        <span>SFS$</span>&nbsp;<sapn class="content" style="word-wrap:break-word;"></sapn><span id="ak" class="cursor">_</span>
+        </div>
+    </div>
+    <script>
+        function displayEndshow()
+        {
+            if($('.cursor').css("display")=="none")
+            {
+                $('.cursor').css("display","inline") ;
+            }else
+            {
+                $('.cursor').css("display","none") ;
+            }
+            setTimeout(displayEndshow,700);
+        }
+        displayEndshow();
+        $(document.body).keydown(function(event){
+            var keyCode = event.keyCode;
+            console.info(keyCode);
+            if(keyCode==32 || keyCode == 13 || keyCode>=48 && keyCode<=57 || keyCode>=48 && keyCode<=57 ||
+            keyCode>=65 && keyCode<=90 || keyCode>=97 && keyCode<=122 || keyCode==8)
+            {
+                if(keyCode>=65 && keyCode<=90)
+                {
+                    keyCode+=32;
+                }
+                if(keyCode==8)
+                {
+                    var h = $(".content").last().html();
+                    if(h.charAt(h.length-1)==";")
+                    {
+                        h = h.substr(0, h.length-6);
+                    }else
+                    {
+                        h = h.substr(0, h.length-1);
+                    }
+                    $(".content").last().html(h);
+                    var div = document.getElementById('rows');
+                    div.scrollTop = div.scrollHeight;
+                    return;
+                }
+                var v = String.fromCharCode(keyCode);
+                //空格
+                if(keyCode==32)
+                {
+                    v = "&nbsp;"
+                }
+                $(".content").last().append(v);
+                if(event.which == 13)       //13等于回车键(Enter)键值,ctrlKey 等于 Ctrl
+                {
+                    var h = $(".content").last().html();
+                    //alert(h);
+                    var command = trimStr(h);
+                    if(command=="")
+                    {
+                        addrow();
+                        return;
+                    }
+                    //alert(command);
+                    var arr = command.split(" ");
+                    if(command=="cls")
+                    {
+                        $("#rows").html("");
+                        addrow();
+                        return;
+                    }else
+                    {
+
+                        var cls = "";
+                        var method = "";
+                        var data = "";
+                        if(arr[0]=="ds")
+                        {
+                            var cls = "Dataserver";
+                            var method = "getDatas";
+                            var data = "";
+                            if(arr.length>1)
+                            {
+                                for(var i=1;i<arr.length;i++)
+                                {
+                                    if(arr[i]!=" ")
+                                    data+=arr[i]+","
+                                }
+                            }
+                        }
+                        if(arr[0]=="block")
+                        {
+                            var cls = "Blocks";
+                            var method = "getDatas";
+                            var data = "";
+                            if(arr.length>1)
+                            {
+                                data = arr[1];
+                            }
+                        }
+
+                        $.ajax({
+                            type: "get",//使用get方法访问后台
+                            dataType: "json",//返回json格式的数据
+                            url: "/remote?class="+cls+"&method="+method+"&data="+data,//要访问的后台地址
+//                            data: "pageIndex=" + pageIndex,//要发送的数据
+                            complete :function(){},//AJAX请求完成时隐藏loading提示
+                            success: function(msg){//msg为返回的数据，在这里做数据绑定
+                                console.info(msg);
+                                if(msg.status==false)
+                                {
+                                    adderror(arr[0],msg);
+                                    addrow();
+                                    return;
+                                }
+                                if("Dataserver"==cls && "getDatas"==method)
+                                {
+                                    addDataServers(msg.data);
+                                }
+                                if("Blocks"==cls && "getDatas"==method)
+                                {
+                                    addBlock(msg,data);
+                                }
+                                addrow();
+                            }
+                        });
+                    }
+                }
+                var div = document.getElementById('rows');
+                div.scrollTop = div.scrollHeight;
+                //$("#rows").scrollTop(300);
+                $(".content").last().html();
+            }
+
+        });
+
+        function addrow()
+        {
+            $("#ak").remove();
+            $("#rows").append("<div class=\"row\">\n" +
+                    "<span>SFS$</span>&nbsp;<sapn class=\"content\" style=\"word-wrap:break-word;\">" +
+                    "</sapn><span id=\"ak\" class=\"cursor\">_</span>\n" +
+                    "</div>");
+        }
+
+        function trimStr(str){
+            var s = str;
+            s = s.replace("&nbsp;"," ");
+            return s.replace(/(^\s*)|(\s*$)/g,"");
+        }
+        function adderror(str,msg)
+        {
+            var html = "&nbsp;"+str+":&nbsp;command&nbsp;not&nbsp;found&nbsp;type&nbsp;help!!!!!";
+            if(msg.data!="")
+            {
+                html+="<br />&nbsp;error&nbsp;is&nbsp;"+msg.data;
+            }
+            $("#rows").append(html);
+        }
+
+        function addBlock(msg,blockId)
+        {
+            var data = msg.data;
+            if(blockId=="")
+            {
+                var html = "&nbsp;"+msg.data;
+            }else
+            {
+                var blockid = data.blockId;
+                var filenum = data.filenum;
+                var totalSize = data.filesize;
+                var html = "<div><span style='display: inline-block;width: 150px'>blockId:</span>"+blockid+"<br>" +
+                        "<span style='display: inline-block;width: 150px'>filenum:</span>"+filenum+"<br>" +
+                        "<span title='"+data.filesizebyte+"' style='display: inline-block;width: 150px'>totalSize:</span>"+totalSize+"<br>" +
+                        "</div>";
+
+            }
+            $("#rows").append(html);
+        }
+
+        function addDataServers(dss)
+        {
+            for(var i=0;i<dss.length;i++)
+            {
+                var id = dss[i].dsid;
+                var online = dss[i].online;
+                var ip = dss[i].ip;
+                var currentblock = dss[i].curentblock;
+                var sty = "";
+                if(online)
+                {
+                    sty = "style='color:green'";
+                }else
+                {
+                    sty = "style='color:red' class='cursor'";
+                }
+                var html = "<div><span style='display: inline-block;width: 150px'>dsId:</span>"+id+"<br>" +
+                        "<span style='display: inline-block;width: 150px'>ip:</span>"+ip+"<br>" +
+                        "<span style='display: inline-block;width: 150px'>currentblock:</span>"+currentblock+"<br>" +
+                        "<span style='display: inline-block;width: 150px'>online:</span><span "+sty+">"+online+"</span><br>" +
+                        "=============================================================" +
+                        "</div>";
+                $("#rows").append(html);
+            }
+            if(dss.length==0)
+            {
+                $("#rows").append("<div>&nbsp;暂无数据服务器</div>");
+            }
+        }
+
+    </script>
+</body>
+</html>

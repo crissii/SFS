@@ -22,7 +22,14 @@ public class FilePakageUpdateIndexHandle implements Handle {
         FilePakageUpdateIndex index = (FilePakageUpdateIndex)pro;
         try
         {
-            BlockWrite.getInstance().updateIndex(index);
+            if(index.isUpdateFile())
+            {
+                BlockWrite.getInstance().updateFileIndex(index);
+            }else
+            {
+                BlockWrite.getInstance().updateIndex(index);
+            }
+
             FilePakageUpdateIndexResult result = new FilePakageUpdateIndexResult();
             result.setStatus(true);
             result.setMessageId(index.getMessageId());

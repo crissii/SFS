@@ -77,6 +77,26 @@ public class GetFileName {
         return arr;
     }
 
+    public String decodeFile2Str(String fileName)
+    {
+        String[] names = fileName.split("\\.");
+        //扩展名
+        String ext = "";
+        if(names.length>1)
+        {
+            ext = names[1].toLowerCase();
+        }
+
+        int ext_int = convertChars2Int(ext);
+
+        byte[] arr = new byte[12];
+        byte[] base = Base58.decode(names[0]);
+        byte[] extByte = ByteUtils.intToBytes(ext_int);
+        System.arraycopy(base,4,arr,0,8);
+        System.arraycopy(extByte,0,arr,8,4);
+        return Base58.encode(arr);
+    }
+
     private static final int BIT_LEN = 5;
     private static final int END_CHAR_BIT =	0;//0
     private static final int MAX_CHAR_BIT =	26;//1~26

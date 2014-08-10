@@ -48,6 +48,17 @@ public class WriteRequestResult extends JsonBodyProtocol {
      */
     long filesize;
 
+    long extendFilesize;
+
+    /**
+     * 更新的时候用到
+     */
+    long oldblockIndex = 0;
+
+    long oldFilesize =0;
+
+    long oldExtendFileSize = 0;
+
     public boolean isStatus() {
         return status;
     }
@@ -111,5 +122,37 @@ public class WriteRequestResult extends JsonBodyProtocol {
 
     public void setLeaderDataServer(int leaderDataServer) {
         this.leaderDataServer = leaderDataServer;
+    }
+
+    public long getExtendFilesize() {
+        return extendFilesize;
+    }
+
+    public void setExtendFilesize(long extendFilesize) {
+        this.extendFilesize = extendFilesize;
+    }
+
+    public long getOldblockIndex() {
+        return oldblockIndex;
+    }
+
+    public void setOldblockIndex(long oldblockIndex) {
+        this.oldblockIndex = oldblockIndex;
+    }
+
+    public long getOldFilesize() {
+        return oldFilesize;
+    }
+
+    public void setOldFilesize(long oldFilesize) {
+        this.oldFilesize = oldFilesize;
+    }
+
+    public long getOldExtendFileSize() {
+        return oldExtendFileSize;
+    }
+
+    public void setOldExtendFileSize(long oldExtendFileSize) {
+        this.oldExtendFileSize = oldExtendFileSize;
     }
 }

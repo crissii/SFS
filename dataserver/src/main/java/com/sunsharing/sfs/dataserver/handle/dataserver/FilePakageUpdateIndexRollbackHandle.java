@@ -23,7 +23,13 @@ public class FilePakageUpdateIndexRollbackHandle implements Handle {
         long [] arr = new long[2];
         arr[0] = rollBack.getBlockIndx();
         arr[1] = rollBack.getInfoIndx();
-        BlockWrite.getInstance().rollbackIndex(rollBack.getBlockId(),arr);
+        if(rollBack.isUpdateFile())
+        {
+            BlockWrite.getInstance().rollbackUpdateFileIndex(rollBack);
+        }else
+        {
+            BlockWrite.getInstance().rollbackIndex(rollBack.getBlockId(),arr);
+        }
 
     }
 

@@ -26,7 +26,13 @@ public class FileSuccessUploadIndexHandle implements Handle {
         {
             if(block!=null)
             {
-                block.addFile(successUploadIndex);
+                if(!successUploadIndex.isUpdateFile())
+                {
+                    block.addFile(successUploadIndex);
+                }else
+                {
+                    block.updatFile(successUploadIndex);
+                }
             }
             FileSuccessUploadIndexResult result = new FileSuccessUploadIndexResult();
             result.setMessageId(successUploadIndex.getMessageId());
@@ -37,7 +43,10 @@ public class FileSuccessUploadIndexHandle implements Handle {
             logger.error("更新blockId索引:"+successUploadIndex.getBlockId()+"出错",e);
             if(block!=null)
             {
+                if(!successUploadIndex.isUpdateFile())
                 block.rollbackAddFile(successUploadIndex);
+                else
+                block.rollbackUpdateFile(successUploadIndex);
             }
             FileSuccessUploadIndexResult result = new FileSuccessUploadIndexResult();
             result.setMessageId(successUploadIndex.getMessageId());

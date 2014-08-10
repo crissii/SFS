@@ -119,8 +119,11 @@ public class DataServerSave {
                     sr.setRemainingapacity(remainingapacity);
                     DataServerStat.addDataServer(sr,false);
                     DataServerStat ds = DataServerStat.getDataServerStat(dataServerId);
-                    ds.setCurrentblock(curentbocks);
-                    ds.setOutline();
+                    if(ds!=null)
+                    {
+                        ds.setCurrentblock(curentbocks);
+                        ds.setOutline();
+                    }
                 }
             }
         }catch(Exception e)

@@ -31,6 +31,8 @@ public class FilePackageCall implements Callable {
 
     private long fileLen;
 
+    private long extendlen;
+
     private String source;
 
     private WriteRequestResult result;
@@ -40,7 +42,7 @@ public class FilePackageCall implements Callable {
     private File file;
 
     public FilePackageCall(File file,int currentPackage,int toalPakage,long fileLen,String source,
-                           WriteRequestResult result,int timeout)
+                           WriteRequestResult result,int timeout,long extendlen)
     {
         this.currentPackage = currentPackage;
         this.toalPakage = toalPakage;
@@ -49,6 +51,7 @@ public class FilePackageCall implements Callable {
         this.result = result;
         this.timeout = timeout;
         this.file = file;
+        this.extendlen = extendlen;
     }
 
     @Override
@@ -84,6 +87,15 @@ public class FilePackageCall implements Callable {
             filePakageSave.setLeaderServer(result.getLeaderDataServer());
             filePakageSave.setDataservers(result.getDataServer());
             filePakageSave.setMd5(FileMd5.getFileMD5String(this.file,from,(to-from)));
+            if(result.getOldblockIndex()!=0)
+            {
+                filePakageSave.setOldBlockIndex(result.getOldblockIndex());
+                filePakageSave.setOldFilesize(result.getOldFilesize());
+                filePakageSave.setOldExtendFileSize(result.getOldExtendFileSize());
+            }else
+            {
+                filePakageSave.setExtendFileSize(this.extendlen);
+            }
 
             long begin = filePakageSave.getFromIndex();
             long remailing = filePakageSave.getToIndex()-filePakageSave.getFromIndex() ;

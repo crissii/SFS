@@ -4,17 +4,6 @@ import com.sunsharing.component.utils.base.StringUtils;
 import com.sunsharing.sfs.common.pro.Constant;
 import com.sunsharing.sfs.common.pro.JsonBodyProtocol;
 import com.sunsharing.sfs.common.pro.ano.Protocol;
-import org.apache.log4j.Logger;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.util.concurrent.locks.Lock;
 
 /**
  * 文件分包传送指令
@@ -42,6 +31,10 @@ public class FilePakageSave extends JsonBodyProtocol {
     String fileName;
     /**文件的总大小totalSize*/
     long totalSize;
+    /**
+     * 扩展文件大小
+     */
+    long extendFileSize;
 
     int blockId;
 
@@ -51,7 +44,39 @@ public class FilePakageSave extends JsonBodyProtocol {
 
     int currentDataServer;
 
+    /**
+     * blockIndex更新时候有值
+     */
+    long oldBlockIndex =0;
 
+    long oldFilesize =0;
+
+    long oldExtendFileSize = 0;
+
+
+    public long getOldFilesize() {
+        return oldFilesize;
+    }
+
+    public void setOldFilesize(long oldFilesize) {
+        this.oldFilesize = oldFilesize;
+    }
+
+    public long getOldExtendFileSize() {
+        return oldExtendFileSize;
+    }
+
+    public void setOldExtendFileSize(long oldExtendFileSize) {
+        this.oldExtendFileSize = oldExtendFileSize;
+    }
+
+    public long getOldBlockIndex() {
+        return oldBlockIndex;
+    }
+
+    public void setOldBlockIndex(long oldBlockIndex) {
+        this.oldBlockIndex = oldBlockIndex;
+    }
 
     /**文件处理是否成功*/
     boolean fileDoSuccess = false;
@@ -92,6 +117,14 @@ public class FilePakageSave extends JsonBodyProtocol {
                 setCurrentDataServer(arr[0]);
             }
         }
+    }
+
+    public long getExtendFileSize() {
+        return extendFileSize;
+    }
+
+    public void setExtendFileSize(long extendFileSize) {
+        this.extendFileSize = extendFileSize;
     }
 
     public String getErrorMsg() {

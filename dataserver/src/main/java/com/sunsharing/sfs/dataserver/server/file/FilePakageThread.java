@@ -46,7 +46,15 @@ public class FilePakageThread implements DistributeCall {
                 {
                     raf1 = new RandomAccessFile(blockDir,"r");
                     FileTransClient client = new FileTransClient();
-                    FileRegion fileRegion = BlockWrite.getInstance().getFileRegion(blockId,fps.getPakagePerSize(),raf1);
+                    FileRegion fileRegion = null;
+                    if(fps.getOldBlockIndex()!=0)
+                    {
+                        //更新文件
+                        fileRegion = BlockWrite.getInstance().getFileRegion(blockId,fps.getOldBlockIndex(),fps.getPakagePerSize(),raf1);
+                    }else
+                    {
+                        fileRegion = BlockWrite.getInstance().getFileRegion(blockId,fps.getPakagePerSize(),raf1);
+                    }
                     FilePackageResult result =(FilePackageResult)client.sendFile
                             (fps,fileRegion,ip,new Integer(port),300*1000);
                     if(!result.isStatus())
