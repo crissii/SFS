@@ -19,6 +19,8 @@ public class HttpManager {
 
         // http://localhost:8080/hello
         context.addServlet(new ServletHolder(new MainController()), "/");
+        context.addServlet(new ServletHolder(new UploadController()), "/upload");
+        context.addServlet(new ServletHolder(new ReadController()), "/read");
 
         server.start();
         server.join();

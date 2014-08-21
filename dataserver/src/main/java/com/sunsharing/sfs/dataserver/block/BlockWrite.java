@@ -164,7 +164,7 @@ public class BlockWrite {
             }
         }
     }
-    public FileRegion getFileRegion(int blockId,long currentIndex,long packageSize,RandomAccessFile raf1)
+    public FileRegion getFileRegion(int blockId,long currentIndex,long packageSize,RandomAccessFile raf1,long fromIndex)
     {
         String contextPath = Config.getBathPath();
         File blockDir = new File(contextPath+"block/"+blockId);
@@ -172,7 +172,7 @@ public class BlockWrite {
         {
             raf1 = new RandomAccessFile(blockDir,"r");
             //long len = raf1.readLong();
-            return new DefaultFileRegion(raf1.getChannel(), currentIndex, packageSize,true);
+            return new DefaultFileRegion(raf1.getChannel(), currentIndex+fromIndex, packageSize,true);
         }catch (Exception e)
         {
             logger.error("写消息文件出错", e);
@@ -180,7 +180,7 @@ public class BlockWrite {
         }
     }
 
-    public FileRegion getFileRegion(int blockId,long packageSize,RandomAccessFile raf1)
+    public FileRegion getFileRegion(int blockId,long packageSize,RandomAccessFile raf1,long fromIndex)
     {
         String contextPath = Config.getBathPath();
         File blockDir = new File(contextPath+"block/"+blockId);
@@ -188,7 +188,7 @@ public class BlockWrite {
         {
             raf1 = new RandomAccessFile(blockDir,"r");
             long len = raf1.readLong();
-            return new DefaultFileRegion(raf1.getChannel(), len, packageSize,true);
+            return new DefaultFileRegion(raf1.getChannel(), len+fromIndex, packageSize,true);
         }catch (Exception e)
         {
             logger.error("写消息文件出错", e);

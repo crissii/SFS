@@ -17,6 +17,7 @@
         <span>SFS$</span>&nbsp;<sapn class="content" style="word-wrap:break-word;"></sapn><span id="ak" class="cursor">_</span>
         </div>
     </div>
+    <iframe id="aaa" name="aaa" style="display: none"></iframe>
     <script>
         function displayEndshow()
         {
@@ -110,6 +111,19 @@
                             }
                         }
 
+                        if(arr[0]=="upload")
+                        {
+                            addUploadForm();
+                            return;
+                        }
+
+                        if(arr[0]=="help")
+                        {
+                            addHelpForm();
+                            addrow();
+                            return;
+                        }
+
                         $.ajax({
                             type: "get",//使用get方法访问后台
                             dataType: "json",//返回json格式的数据
@@ -167,6 +181,40 @@
                 html+="<br />&nbsp;error&nbsp;is&nbsp;"+msg.data;
             }
             $("#rows").append(html);
+        }
+
+        function addHelpForm()
+        {
+            var html = "&nbsp;cls--清屏<br>"
+            html+="&nbsp;ds--显示Data服务器状态<br>";
+            html+="&nbsp;block--显示block状态<br>";
+            html+="&nbsp;upload--上传文件<br>";
+            $("#rows").append(html);
+        }
+
+        function addUploadForm()
+        {
+            var h = "<div id='uploadform'><form target='aaa' id=\"upload\" method='post' action='/upload' enctype=\"multipart/form-data\">" +
+            "<input type=\"file\" name=\"file\" onchange='document.getElementById(\"upload\").submit();' /></form></div>";
+            $("#rows").append(h);
+        }
+        function addfileSuccess(name)
+        {
+            $("#uploadform").remove();
+            var ext = name.toLowerCase().split(".")[1];
+            if(ext=='jpg' || ext=='jpeg' || ext=='png' || ext=='gif' || ext=='ico')
+            {
+                $("#rows").append("<div><img src='read?name="+name+"' width='200px' /></div>");
+            }else
+            {
+                $("#rows").append("<div>成功上传文件:"+name+"</div>");
+            }
+            addrow();
+        }
+        function addfileError(msg)
+        {
+            $("#rows").append("<div>上传出错:"+msg+"</div>");
+            addrow();
         }
 
         function addBlock(msg,blockId)

@@ -50,10 +50,13 @@ public class FilePakageThread implements DistributeCall {
                     if(fps.getOldBlockIndex()!=0)
                     {
                         //更新文件
-                        fileRegion = BlockWrite.getInstance().getFileRegion(blockId,fps.getOldBlockIndex(),fps.getPakagePerSize(),raf1);
+                        fileRegion = BlockWrite.getInstance().getFileRegion(blockId,fps.getOldBlockIndex(),(fps.getToIndex()-fps.getFromIndex()),
+                                raf1,fps.getFromIndex());
                     }else
                     {
-                        fileRegion = BlockWrite.getInstance().getFileRegion(blockId,fps.getPakagePerSize(),raf1);
+                        fps.getFromIndex();
+                        fileRegion = BlockWrite.getInstance().getFileRegion(blockId,(fps.getToIndex()-fps.getFromIndex()),
+                                raf1,fps.getFromIndex());
                     }
                     FilePackageResult result =(FilePackageResult)client.sendFile
                             (fps,fileRegion,ip,new Integer(port),300*1000);

@@ -165,6 +165,13 @@ public class FilePackageSaveHandle implements Handle {
                         future = channel.write(result1);
                         return;
                     }
+                }else
+                {
+                    //本次包已经成功
+                    FilePackageResult result2 = new FilePackageResult();
+                    result2.setStatus(true);
+                    result2.setMessageId(filePakageSave.getMessageId());
+                    future = channel.write(result2);
                 }
             }else
             {

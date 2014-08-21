@@ -131,7 +131,7 @@ public class Request {
                 {
                     toalPakage = 1;
                 }
-                toalPakage = 1;
+                toalPakage = 4;
 
                 String fileName = "";
 
@@ -230,12 +230,12 @@ public class Request {
         //1112SorHNvN9kPx.txt
              File f = new File("/Users/criss/Desktop/file/1.txt");
              Request r = new Request();
-            // String filename = r.addFile(f,2,"localhost",1320,1000000);
+             String filename = r.addFile(f,2,"localhost",1320,1000000);
             // String filename = r.updateFile(f,"1112SorHNvN9kPx.txt","localhost",1320,100000);
-             //System.out.println("~~~~~~~~~:"+filename);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            r.read("1112SorHNvN9kPx.txt",out,"localhost",1320);
-            System.out.println(new String(out.toByteArray())+"AAAA");
+             System.out.println("~~~~~~~~~:"+filename);
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            r.read("1112SorHNvN9kPx.txt",out,"localhost",1320);
+//            System.out.println(new String(out.toByteArray())+"AAAA");
 //        }
 
 //
