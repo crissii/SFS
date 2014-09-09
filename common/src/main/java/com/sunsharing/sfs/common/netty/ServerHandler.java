@@ -34,7 +34,7 @@ public    class ServerHandler extends SimpleChannelHandler {
         }else
         if(basePro instanceof BaseProtocol)
         {
-            logger.info("收到请求：" + basePro);
+            logger.debug("收到请求：" + basePro);
             service.execute(new Runnable() {
                 @Override
                 public void run() {

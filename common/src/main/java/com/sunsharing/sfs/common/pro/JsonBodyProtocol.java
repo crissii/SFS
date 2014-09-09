@@ -163,7 +163,7 @@ public  class JsonBodyProtocol extends BaseProtocol {
                     !fileds[i].equals(bodyLength))
             {
                 Object value = getFieldValueByName(fileds[i]);
-                System.out.println(fileds[i]+"::"+value);
+                logger.debug(fileds[i]+"::"+value);
             }
         }
     }

@@ -113,7 +113,7 @@ public class FilePackageCall implements Callable {
                 return true;
             }else
             {
-                logger.error(result.getErrorMsg());
+                logger.error(r.getMsg());
                 return false;
             }
         }catch (Exception e)

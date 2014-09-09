@@ -73,7 +73,7 @@ public class FileReadChunckDecode extends ReplayingDecoder<FileReadChunckDecode.
                         if(out!=null)
                         {
                             byte[] hehe = buffer.readBytes((int)currentChunkSize).array();
-                            System.out.println("0000000:"+hehe.length);
+                            //System.out.println("0000000:"+hehe.length);
                             out.write(hehe);
                             fs.addOffSet(currentChunkSize);
                         }

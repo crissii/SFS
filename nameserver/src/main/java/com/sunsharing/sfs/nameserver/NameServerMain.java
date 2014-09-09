@@ -45,6 +45,8 @@ public class NameServerMain {
             System.exit(1);
         }
 
+        DataServerStat.startCheckOutline();
+
         try
         {
             HttpManager hm = new HttpManager();
@@ -55,7 +57,7 @@ public class NameServerMain {
             System.exit(1);
         }
 
-        DataServerStat.startCheckOutline();
+
 
     }
 

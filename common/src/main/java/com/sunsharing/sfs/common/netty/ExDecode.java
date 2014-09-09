@@ -24,7 +24,7 @@ public class ExDecode extends FrameDecoder {
     protected Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer buffer) throws Exception {
         logger.debug("decode:" + buffer);
         BaseProtocol pro = ProFactory.createPro(buffer);
-        logger.info("decode:" + pro);
+        logger.debug("decode:" + pro);
         return pro;
     }
 }

@@ -88,7 +88,7 @@ class CreateBlockCall implements DistributeCall
                 BlockCreateRequest blockCreateRequest = new BlockCreateRequest();
                 blockCreateRequest.setBlockId(blockId);
                 BaseProtocol baseProtocol =
-                        client.request(blockCreateRequest, ip, new Integer(port), 5000);
+                        client.request(blockCreateRequest, ip, new Integer(port), 30000);
                 if(baseProtocol instanceof BlockCreateResult)
                 {
                     return "success";

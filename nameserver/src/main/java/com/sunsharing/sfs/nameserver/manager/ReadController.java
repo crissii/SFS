@@ -36,7 +36,7 @@ public class ReadController extends HttpServlet {
 
 
         Request r = new Request();
-        r.read(name,response.getOutputStream(),"localhost",new Integer(Config.nameserverLisen));
+        r.read(name,response.getOutputStream(),"localhost",new Integer(Config.nameserverLisen),false);
 
     }
 

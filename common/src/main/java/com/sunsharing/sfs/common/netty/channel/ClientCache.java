@@ -18,7 +18,7 @@ public class ClientCache {
 
     public static synchronized LongChannel getChannel(NettyClient nettyClient,String ip,String port)
     {
-        logger.info("当前连接数:"+channels.size());
+        logger.debug("当前连接数:"+channels.size());
         for(LongChannel ch:channels)
         {
             if(ch.getIp().equals(ip) && ch.getPort().equals(port))

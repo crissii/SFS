@@ -98,13 +98,13 @@ public abstract class NettyClient {
 
     public  void cleanResource()
     {
-//        if(clientBootstrap!=null)
-//        {
-//            clientBootstrap.releaseExternalResources();
-//        }else
-//        {
-//            clientSocketChannelFactory.releaseExternalResources();
-//        }
+        if(clientBootstrap!=null)
+        {
+            clientBootstrap.releaseExternalResources();
+        }else
+        {
+            clientSocketChannelFactory.releaseExternalResources();
+        }
     }
 
     protected ChannelFuture getNoResult(BaseProtocol pro, MyChannel channel) throws Exception{

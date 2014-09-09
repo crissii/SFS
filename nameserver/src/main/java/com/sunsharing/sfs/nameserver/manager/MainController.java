@@ -24,11 +24,13 @@ public class MainController extends HttpServlet {
 
 
 
-        //String path = UriUtil.getClassPath();
+        String path = UriUtil.getClassPath();
 
-        //path = path.replaceAll("\\\\", "/");
+        path = path.replaceAll("\\\\", "/");
 
-        String path = "/Users/criss/Desktop/projectDev/SFS/nameserver/src/main/resources";
+        //String path = "/Users/criss/Desktop/projectDev/SFS/nameserver/src/main/resources";
+
+        logger.info("path:"+path);
 
         //path +="/";
 

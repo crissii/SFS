@@ -1,7 +1,9 @@
 package com.sunsharing.sfs.requestapi;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import com.sunsharing.component.utils.base.ByteUtils;
 import com.sunsharing.component.utils.base.StringUtils;
+import com.sunsharing.component.utils.crypto.Base64;
 import com.sunsharing.sfs.common.netty.NettyClient;
 import com.sunsharing.sfs.common.netty.ShortNettyClient;
 import com.sunsharing.sfs.common.pro.ProClassCache;
@@ -10,10 +12,7 @@ import com.sunsharing.sfs.common.utils.Base58;
 import com.sunsharing.sfs.common.utils.GetFileName;
 import org.apache.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -30,7 +29,7 @@ public class Request {
 
     Logger logger = Logger.getLogger(Request.class);
 
-    public void read(String filename,OutputStream output,String ip,int port)
+    public void read(String filename,OutputStream output,String ip,int port,boolean release)
     {
         GetFileName getFileName = new GetFileName();
         ProClassCache.init();
@@ -81,21 +80,100 @@ public class Request {
         {
             logger.error("读取文件:"+filename+":出错:",e);
             throw new RuntimeException("读取文件:"+filename+":出错:"+e.getMessage());
+        }finally
+        {
+            if(release)
+            {
+                client.cleanResource();
+            }
         }
+    }
+    public String downloadJS(String dfsname,String sourcename,String ip,String port)
+    {
+        sourcename = tranName(sourcename);
+        sourcename = sourcename.replaceAll("\\\\","/");
+        File souceFile = new File(sourcename);
+        if(souceFile.exists())
+        {
+            souceFile.renameTo(new File(sourcename+".bak"));
+        }
+        int i = sourcename.lastIndexOf("/");
+        if(i!=-1)
+        {
+            File f1 = new File(sourcename.substring(0,i));
+            if(!f1.exists())
+            {
+                f1.mkdirs();
+            }
+        }
+
+
+        FileOutputStream output = null;
+        try
+        {
+            output = new FileOutputStream(souceFile);
+            read(dfsname,output,ip,new Integer(port),true);
+            return "success";
+        }catch (Exception e)
+        {
+            logger.error("",e);
+            throw new RuntimeException("error");
+        }finally {
+            if(output!=null)
+            {
+                try
+                {
+                    output.close();
+                }catch (Exception e)
+                {
+
+                }
+            }
+            exec.shutdown();
+        }
+    }
+
+    public String addFileJS(String file,String extendLength,String ip,String port,String timeout)
+    {
+        file = tranName(file);
+        File f = new File(file);
+        long extend = new Long(extendLength)*1000;
+        String result = request(f,null,extend,ip,new Integer(port),new Integer(timeout),true);
+        exec.shutdown();
+        return result;
+    }
+
+    public String updateFileJS(String dfsname,String file,String ip,String port,String timeout)
+    {
+        file = tranName(file);
+        File f = new File(file);
+
+        String result = updateFile(f, dfsname, ip, new Integer(port), new Integer(timeout), true);
+        exec.shutdown();
+        return result;
     }
 
     public String updateFile(File file,String updateFilename,String ip,int port,int timeout)
     {
-        return request(file,updateFilename,0,ip,port,timeout);
+        return request(file,updateFilename,0,ip,port,timeout,false);
+    }
+
+    public String updateFile(File file,String updateFilename,String ip,int port,int timeout,boolean clean)
+    {
+        return request(file,updateFilename,0,ip,port,timeout,clean);
     }
 
     public String addFile(File file,long extendLength,String ip,int port,int timeout)
     {
-        return request(file,null,extendLength,ip,port,timeout);
+        return request(file,null,extendLength,ip,port,timeout,false);
     }
 
-    private String request(File file,String updateFilename,long extendLength,String ip,int port,int timeout)
+    private String request(File file,String updateFilename,long extendLength,String ip,int port,int timeout,boolean clean)
     {
+        if(file.length()+extendLength>=64*1024*1024L)
+        {
+            throw new RuntimeException(file.getName()+"超过64M");
+        }
         long fileLen = file.length();
         ProClassCache.init();
         ShortNettyClient client = new ShortNettyClient();
@@ -113,7 +191,7 @@ public class Request {
             }
 
             WriteRequestResult result = (WriteRequestResult)
-            client.request(request, ip, port, 10000);
+            client.request(request, ip, port, 300000);
             //result.print();
             if(result.isStatus())
             {
@@ -169,7 +247,7 @@ public class Request {
                 }
                 if(!allSuccess)
                 {
-                    throw new RuntimeException("上传出错");
+                    throw new RuntimeException("上传出错:文件名:"+file.getAbsolutePath()+":"+file.getName());
                 }
                 return getFileName.getReturnFileName(file.getName(),result.getBlockId(),fileName);
             }else
@@ -197,12 +275,31 @@ public class Request {
                     logger.error("释放锁报错",e);
                 }
             }
+            if(clean)
+            {
+                client.cleanResource();
+            }
         }
+    }
+    private String tranName(String s)
+    {
+        s = s.replaceAll("@@@@","(");
+        s = s.replaceAll("####",")");
+        s = s.replaceAll("----"," ");
+        return s;
     }
 
     public static void main(String[]a) throws Exception
     {
 
+        //String a1 = new String(Base64.decode("LwBVAHMAZQByAHMALwBjAHIAaQBzAHMALwBEAGUAcwBrAHQAbwA="));
+        //System.out.println(a1);
+       // String s = Base64.encode("/Users/criss/Desktop/tmp/pp副本".getBytes("utf-8"));
+//        String s = "@@@@a&&&&&&&&bc####";
+//        s = s.replaceAll("@@@@","(");
+//        s = s.replaceAll("&&&&"," ");
+//        System.out.println(s);
+        //System.out.println(s);
         //1112Ue3Q8JFYKyq.txt
         //111kAXhG2qt8zk
 //        ExecutorService service =  Executors.newFixedThreadPool(1);
@@ -215,9 +312,10 @@ public class Request {
 //                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 //                    r.read("1112aAGXZXqdkoY.txt",bytes,"localhost",1320);
 //                    System.out.println(new String(bytes.toByteArray(),"UTF-8"));
-//                    File f = new File("/Users/criss/Desktop/file/1.txt");
-//                    Request r = new Request();
-//                    String filename = r.request(f,"localhost",1320,1000000);
+                    File f = new File("/Users/criss/Downloads/归档.zip");
+                    //File f = new File("/Users/criss/Downloads/catalina.out");
+                    Request r = new Request();
+                    String filename = r.addFile(f,f.length()/4,"localhost",1320,30000);
 //                    System.out.println("~~~~~~~~~:"+filename);
 //                }catch (Exception e)
 //                {
@@ -228,11 +326,11 @@ public class Request {
 //        for(int i=0;i<1;i++)
 //        {
         //1112SorHNvN9kPx.txt
-             File f = new File("/Users/criss/Desktop/file/1.txt");
-             Request r = new Request();
-             String filename = r.addFile(f,2,"localhost",1320,1000000);
-            // String filename = r.updateFile(f,"1112SorHNvN9kPx.txt","localhost",1320,100000);
-             System.out.println("~~~~~~~~~:"+filename);
+//             File f = new File("/Users/criss/Desktop/file/1.txt");
+//             Request r = new Request();
+//             String filename = r.addFileJS("/Users/criss/Desktop/file/1.txt", "2", "localhost", "1320", "100000");
+//            // String filename = r.updateFile(f,"1112SorHNvN9kPx.txt","localhost",1320,100000);
+//             System.out.println("~~~~~~~~~:"+filename);
 //            ByteArrayOutputStream out = new ByteArrayOutputStream();
 //            r.read("1112SorHNvN9kPx.txt",out,"localhost",1320);
 //            System.out.println(new String(out.toByteArray())+"AAAA");
@@ -280,6 +378,7 @@ public class Request {
 //
 //            }
 //        }
+        System.out.println("\u5B50\u8FDB\u7A0B\u5DF2\u5173\u95ED\uFF0C\u4EE3\u7801\uFF1A1");
 //
     }
 

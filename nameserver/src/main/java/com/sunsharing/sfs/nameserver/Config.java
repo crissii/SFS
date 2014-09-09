@@ -2,6 +2,7 @@ package com.sunsharing.sfs.nameserver;
 
 import com.sunsharing.component.resvalidate.config.annotation.Configuration;
 import com.sunsharing.component.resvalidate.config.annotation.ParamField;
+import com.sunsharing.sfs.common.utils.Path;
 
 /**
  * Created by criss on 14-7-3.
@@ -20,6 +21,8 @@ public class Config {
 
     public static String getContextPath()
     {
+        //System.out.println(Path.getContextRealPath());
+        //return Path.getContextRealPath();
         return "/Users/criss/Desktop/file/nameserver/";
     }
 

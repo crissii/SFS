@@ -25,4 +25,5 @@ public class Constant {
     public final static byte READ_FILE_RESULT='Q';
     public final static byte DATA_READ = 'U';
     public final static byte DATA_READ_RESULT = 'T';
+    public final static byte DIR_MAIN = 'V';
 }

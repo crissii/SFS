@@ -2,6 +2,7 @@ package com.sunsharing.sfs.dataserver;
 
 import com.sunsharing.component.resvalidate.config.annotation.Configuration;
 import com.sunsharing.component.resvalidate.config.annotation.ParamField;
+import com.sunsharing.sfs.common.utils.Path;
 
 /**
  * Created by criss on 14-7-2.
@@ -25,6 +26,7 @@ public class Config {
 
     public static String getBathPath()
     {
+        //return Path.getContextRealPath();
         return basePath;
     }
 

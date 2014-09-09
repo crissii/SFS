@@ -49,7 +49,7 @@ public class FileTransClient extends ShortNettyClient {
             channel.write(region);
             //等待返回
             ArrayBlockingQueue<BaseProtocol> blockingQueue = result.get(pro.getMessageId());
-            logger.error("等待超时时间:"+timeout);
+            //logger.info("等待超时时间:"+timeout);
             BaseProtocol result = blockingQueue.poll(timeout, TimeUnit.MILLISECONDS);
             logger.info("返回结果:" + result);
             if (result == null) {
@@ -64,7 +64,7 @@ public class FileTransClient extends ShortNettyClient {
             result.remove(pro.getMessageId());
             if(channel instanceof ShortChannel)
             {
-                logger.error("关闭Channel");
+                logger.info("关闭Channel");
                 if (channel != null) {
                     channel.close();
                 }

@@ -1,5 +1,6 @@
 package com.sunsharing.sfs.dataserver.server.file;
 
+import com.sunsharing.component.utils.base.StringUtils;
 import com.sunsharing.sfs.common.pro.BaseProtocol;
 import com.sunsharing.sfs.common.pro.ProFactory;
 import com.sunsharing.sfs.common.pro.api.FilePakageSave;
@@ -61,16 +62,18 @@ public class FileChunckDecode  extends ReplayingDecoder<FileChunckDecode.State> 
                             ((FilePakageSave) pro).setFileDoSuccess(false);
                             ((FilePakageSave) pro).setErrorMsg("无法写Block文件:"+fs.getBlockId()+"超过64M文件长度");
                             BlockWrite.getInstance().closeBlock(raf);
-                            return reset(pro);
+                            //return reset(pro);
+                        }else
+                        {
+                            raf.seek(currentWriteLen+fs.getFromIndex());
                         }
-                        raf.seek(currentWriteLen+fs.getFromIndex());
                    }catch (Exception e)
                    {
                        logger.error("无法打开Block文件:"+fs.getBlockId(),e);
                        ((FilePakageSave) pro).setFileDoSuccess(false);
                        ((FilePakageSave) pro).setErrorMsg("无法打开Block文件:"+fs.getBlockId());
                        BlockWrite.getInstance().closeBlock(raf);
-                       return reset(pro);
+                       //return reset(pro);
                    }
                    checkpoint(State.Read_Content);
                }else
@@ -89,23 +92,36 @@ public class FileChunckDecode  extends ReplayingDecoder<FileChunckDecode.State> 
                     int maxCanRead = buffer.readableBytes();
                     currentChunkSize = Math.min(maxCanRead, currentChunkSize);
 
-                    try{
-                        byte[] bu = buffer.readBytes((int)currentChunkSize).array();
-                        raf.write(bu);
+                    if(!StringUtils.isBlank(((FilePakageSave) pro).getErrorMsg()))
+                    {
+                        buffer.readBytes((int)currentChunkSize).array();
+                        //buffer.
                         fs.increate(currentChunkSize);
-                    }catch(Exception e){
-                        logger.error("接收错误,blockId:"+fs.getBlockId(),e);
-                        //throw new RuntimeException("接收文件包出错");
-                        ((FilePakageSave) pro).setFileDoSuccess(false);
-                        ((FilePakageSave) pro).setErrorMsg("接收错误,blockId:"+fs.getBlockId());
-                        BlockWrite.getInstance().closeBlock(raf);
-                        return reset(pro);
+                    }else
+                    {
+                        try{
+                            byte[] bu = buffer.readBytes((int)currentChunkSize).array();
+                            raf.write(bu);
+                            fs.increate(currentChunkSize);
+                        }catch(Exception e){
+                            logger.error("接收错误,blockId:"+fs.getBlockId(),e);
+                            //throw new RuntimeException("接收文件包出错");
+                            ((FilePakageSave) pro).setFileDoSuccess(false);
+                            ((FilePakageSave) pro).setErrorMsg("接收错误,blockId:"+fs.getBlockId());
+                            BlockWrite.getInstance().closeBlock(raf);
+                            //return reset(pro);
+                            checkpoint(State.Read_Content);
+                        }
                     }
                     logger.info("成功写入block,blockId:"+fs.getBlockId()+":大小:"+currentChunkSize);
                     if(fs.isLast()){
                         //结束这个包的读取
                         //raf.close();
                         BlockWrite.getInstance().closeBlock(raf);
+                        if(!StringUtils.isBlank(((FilePakageSave) pro).getErrorMsg()))
+                        {
+                            return reset(pro);
+                        }
                         try
                         {
 

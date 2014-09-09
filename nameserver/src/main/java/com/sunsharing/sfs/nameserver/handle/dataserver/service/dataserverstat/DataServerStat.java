@@ -227,6 +227,7 @@ public class DataServerStat {
     {
         beeperHandle = heartscheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
+                //logger.error("进入检查检查在线");
                 outlineCheck();
             }
         },5,10, TimeUnit.SECONDS);
@@ -234,6 +235,7 @@ public class DataServerStat {
         //检查已经满的Block删除
         heartscheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
+                logger.error("进入检查检查已经满的Block删除");
                 for(Iterator iter =  dataServers.iterator();iter.hasNext();)
                 {
                     DataServerStat dss = (DataServerStat)iter.next();

@@ -72,6 +72,7 @@ public class BlockInfoWrite {
         {
             int blockId = new Integer(list[i].getName());
             File blockInfo = new File(contextPath+"blockinfo/"+blockId);
+            System.out.println("filesize:"+blockInfo.length());
             Block block = BlockCache.getBlockById(blockId);
             if(block==null)
             {
@@ -86,6 +87,8 @@ public class BlockInfoWrite {
                     byte[] buffer = new byte[12];
                     while(raf1.read(buffer)!=-1)
                     {
+                        try
+                        {
                         long blockIndex = raf1.readLong();
                         long filesize = raf1.readLong();
                         long extendfile = raf1.readLong();
@@ -94,6 +97,11 @@ public class BlockInfoWrite {
                         if(size%10000==0 && size!=0)
                         {
                             logger.info("加载10000个文件");
+                        }
+                        }catch (Exception e)
+                        {
+                            //logger.error("blockInfo:"+blockInfo.getName(),e);
+                            //e.printStackTrace();
                         }
                     }
                 }catch (Exception e)

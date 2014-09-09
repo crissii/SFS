@@ -12,6 +12,7 @@
         <module>dataserver</module>
         <module>common</module>
         <module>requestAPI</module>
+        <module>directMan</module>
     </modules>
     <packaging>pom</packaging>
 

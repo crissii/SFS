@@ -152,6 +152,7 @@ public class WriteRequestHandle implements Handle {
             //3.需要新建Block
             if(createBlock)
             {
+                logger.info("需要创建block");
                 List<DataServerStat> dss =
                         DataServerStat.getFreeDataServer
                                 (new Integer(Config.lowestBackNum)-1,dataServer.getServerId());
