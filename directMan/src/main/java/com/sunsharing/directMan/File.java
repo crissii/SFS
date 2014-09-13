@@ -99,6 +99,8 @@ public class File implements Serializable{
 
                 initIndex(root);
 
+                System.out.println("-------加载索引成功--------");
+
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -352,7 +354,7 @@ public class File implements Serializable{
         if(!new java.io.File(filePath).exists())
         {
             Request request = new Request();
-            String sfsname = request.addFile(dataFile,50*1024*1024,"localhost",1320,30000);
+            String sfsname = request.addFile(dataFile,50*1024*1024,"192.168.0.169",1320,30000);
             try
             {
                 out = new FileOutputStream(filePath);

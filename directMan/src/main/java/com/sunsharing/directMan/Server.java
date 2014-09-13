@@ -37,21 +37,36 @@ public class Server {
                 {
                    // System.out.println(len);
                     array.write((byte)len);
-                    //System.out.println(array.toString());
-                    if(len==93)
+                    System.out.println(array.toString());
+                    if(array.toString().startsWith("[") && len==93)
+                    {
+                        break;
+                    }
+                    if(array.toString().startsWith("{") && len==125)
                     {
                         break;
                     }
                 }
-                JSONArray obj = JSONArray.parseArray(new String(array.toByteArray(), "UTF-8"));
-                System.out.println(new String(array.toByteArray(),"UTF-8"));
-                for(int i=0;i<obj.size();i++)
+                String result = new String(array.toByteArray(), "UTF-8");
+                if(result.endsWith("]"))
                 {
-                    FileServer s = new FileServer((JSONObject)obj.get(i));
-                    service.execute(s);
+                    JSONArray obj = JSONArray.parseArray(result);
+                    System.out.println(new String(array.toByteArray(),"UTF-8"));
+                    for(int i=0;i<obj.size();i++)
+                    {
+                        FileServer s = new FileServer((JSONObject)obj.get(i));
+                        service.execute(s);
+                    }
+                    //FileServer.blockingQueue.add(obj.get(i));
+                    socket.getOutputStream().write("success".getBytes());
+                }else
+                {
+                    JSONObject obj = JSONObject.parseObject(result);
+                    String baseName = obj.getString("baseName");
+                    FileSyn syn = new FileSyn();
+                    syn.synDir(baseName,baseName);
+                    socket.getOutputStream().write("success".getBytes());
                 }
-                //FileServer.blockingQueue.add(obj.get(i));
-                socket.getOutputStream().write("success".getBytes());
             }catch (Exception e)
             {
                 e.printStackTrace();

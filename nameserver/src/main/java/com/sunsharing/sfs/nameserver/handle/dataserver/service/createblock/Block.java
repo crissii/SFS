@@ -258,10 +258,14 @@ public class Block {
 
     public boolean canwrite(long filesize)
     {
+        if(islock())
+        {
+            return false;
+        }
         if(currentindex+filesize<64*1024*1024L)
         {
             //需要所有的server在线才让写
-           if(getOnlineServer().size()==dataServers.size() && !islock())
+           if(getOnlineServer().size()==dataServers.size())
            {
                 return true;
            }else

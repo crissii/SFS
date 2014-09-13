@@ -456,14 +456,14 @@ public class BlockWrite {
     }
 
       
-    public boolean fileAllPackageSuccess(int blockId,int pakageSize)
+    public synchronized boolean fileAllPackageSuccess(int blockId,int pakageSize)
     {
         String contextPath = Config.getBathPath();
         File blockDir = new File(contextPath+"block/"+blockId);
         RandomAccessFile raf1 = null;
         try
         {
-            raf1 = new RandomAccessFile(blockDir,"r");
+            raf1 = new RandomAccessFile(blockDir,"rw");
             raf1.seek(64*1024*1024L);
             long len = raf1.readLong();
             raf1.seek(64*1024*1024L+len);
@@ -478,8 +478,14 @@ public class BlockWrite {
                     break;
                 }
             }
+            if(success)
+            {
+                //如果成功，清空所有的包
+                byte[] b2 = new byte[pakageSize];
+                raf1.seek(64*1024*1024L+len);
+                raf1.write(b2);
+            }
             return success;
-
         }catch (Exception e)
         {
             logger.error("读block出错", e);

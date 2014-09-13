@@ -60,7 +60,7 @@ public class FileChunckDecode  extends ReplayingDecoder<FileChunckDecode.State> 
                         if(currentWriteLen+fs.getTotalSize()+fs.getExtendFileSize()>=64*1024*1024L)
                         {
                             ((FilePakageSave) pro).setFileDoSuccess(false);
-                            ((FilePakageSave) pro).setErrorMsg("无法写Block文件:"+fs.getBlockId()+"超过64M文件长度");
+                            ((FilePakageSave) pro).setErrorMsg("oldBlockIndex:"+fs.getOldBlockIndex()+":"+fs.getFileName()+"无法写Block文件:"+fs.getBlockId()+"超过64M文件长度,currentWriteLen:"+currentWriteLen+":totalSize:"+fs.getTotalSize()+":"+fs.getExtendFileSize());
                             BlockWrite.getInstance().closeBlock(raf);
                             //return reset(pro);
                         }else

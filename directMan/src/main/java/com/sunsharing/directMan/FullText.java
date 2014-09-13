@@ -3,6 +3,7 @@ package com.sunsharing.directMan;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sunsharing.component.utils.base.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -38,6 +39,8 @@ import org.wltea.analyzer.lucene.IKSimilarity;
  */
 public class FullText {
 
+    static Logger logger = Logger.getLogger(FullText.class);
+
     public static void main(String []a) throws Exception
     {
 //        Analyzer ikAnalyzer = new IKAnalyzer();
@@ -55,13 +58,17 @@ public class FullText {
     {
         try
         {
+            logger.info("1");
         IndexReader reader = IndexReader.open(directory);
+            logger.info("2");
         IndexSearcher searcher = new IndexSearcher(reader);
+            logger.info("3");
         searcher.setSimilarity(new IKSimilarity());
         //String keyWords = "何鑫";
 
         Query query = IKQueryParser.parse("source_name", keyword);
         TopDocs topDocs = searcher.search(query, 100);
+            logger.info("4");
         System.out.println(topDocs.totalHits);
 
         ScoreDoc[] score = topDocs.scoreDocs;
@@ -124,7 +131,7 @@ public class FullText {
         doc.add(new Field("source_name", f.source_name + "", Field.Store.YES, Field.Index.ANALYZED));
         //indexWriter.addDocument(doc2);
 
-        System.out.println(f.source_name+":"+f.lastModify+"......");
+        //System.out.println(f.source_name+":"+f.lastModify+"......");
         //Document doc3 = new Document();
         doc.add(new Field("lastModify", f.lastModify + "", Field.Store.YES, Field.Index.NO));
         //indexWriter.addDocument(doc3);
@@ -158,14 +165,14 @@ public class FullText {
             path = path.substring(0,path.length()-1);
         }
 
-        System.out.println(path);
+        //System.out.println(path);
         //Document doc6 = new Document();
         doc.add(new Field("path", path, Field.Store.YES, Field.Index.NO));
         //indexWriter.addDocument(doc6);
 
             indexWriter.addDocument(doc);
 
-        System.out.println("add index。。。。。。。。。。。");
+       // System.out.println("add index。。。。。。。。。。。");
         }catch (Exception e)
         {
             e.printStackTrace();

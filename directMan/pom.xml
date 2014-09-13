@@ -58,6 +58,12 @@
             <systemPath>${project.basedir}/lib/lucene-core-3.3.0.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

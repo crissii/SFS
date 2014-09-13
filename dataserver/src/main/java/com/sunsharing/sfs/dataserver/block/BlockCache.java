@@ -27,6 +27,18 @@ public class BlockCache {
         return blocks.size();
     }
 
+    public static Block getBlock(int blocId)
+    {
+        for(Block block:blocks)
+        {
+            if(block.blockId == blocId)
+            {
+                return block;
+            }
+        }
+        return null;
+    }
+
     public static void initFromDisk()
     {
         List<Block> blockss = BlockWrite.getInstance().loadBlocks();

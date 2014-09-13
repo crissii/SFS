@@ -82,7 +82,7 @@ public class HttpMain {
             {
                 //System.out.println(len);
                 array.write((byte)len);
-                //System.out.println(array.toString());
+                System.out.println(array.toString());
                 if(len==125)
                 {
                     break;

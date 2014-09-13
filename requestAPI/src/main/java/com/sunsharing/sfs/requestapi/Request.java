@@ -302,7 +302,7 @@ public class Request {
         //System.out.println(s);
         //1112Ue3Q8JFYKyq.txt
         //111kAXhG2qt8zk
-//        ExecutorService service =  Executors.newFixedThreadPool(1);
+        ExecutorService service =  Executors.newFixedThreadPool(5);
 //        Runnable r = new Runnable(){
 //            public void run()
 //            {
@@ -312,10 +312,24 @@ public class Request {
 //                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 //                    r.read("1112aAGXZXqdkoY.txt",bytes,"localhost",1320);
 //                    System.out.println(new String(bytes.toByteArray(),"UTF-8"));
-                    File f = new File("/Users/criss/Downloads/归档.zip");
+
+
                     //File f = new File("/Users/criss/Downloads/catalina.out");
-                    Request r = new Request();
-                    String filename = r.addFile(f,f.length()/4,"localhost",1320,30000);
+
+                    for(int i=0;i<1000000;i++)
+                    {
+                        service.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                Request r = new Request();
+                                File f = new File("/Users/criss/Desktop/file/1.txt");
+                                String filename = r.addFile(f, 10L, "localhost", 1320, 30000);
+                            }
+                        });
+
+                    }
+//                    r.addFile(f, 10L, "localhost", 1320, 30000);
+//                    r.addFile(f, 10L, "localhost", 1320, 30000);
 //                    System.out.println("~~~~~~~~~:"+filename);
 //                }catch (Exception e)
 //                {

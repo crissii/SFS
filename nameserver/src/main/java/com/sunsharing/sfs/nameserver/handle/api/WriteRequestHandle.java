@@ -136,8 +136,9 @@ public class WriteRequestHandle implements Handle {
             {
                 for(int i=0;i<currentBlocks.size();i++)
                 {
-                    if(currentBlocks.get(i).canwrite(writeRequest.getFilesize()+
-                    writeRequest.getExtendfilesize()))
+                    logger.info(writeRequest.getFilename()+":"+currentBlocks.get(i).getCurrentindex()+":"+currentBlocks.get(i).getBlockId()+":"+writeRequest.getFilesize()+":"+
+                            writeRequest.getExtendfilesize());
+                    if(currentBlocks.get(i).canwrite(writeRequest.getFilesize()+writeRequest.getExtendfilesize()))
                     {
                         createBlock = false;
                         writeBlockId = currentBlocks.get(i).getBlockId();

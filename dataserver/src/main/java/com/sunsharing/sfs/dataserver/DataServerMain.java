@@ -18,23 +18,26 @@ public class DataServerMain {
     {
         ConfigContext.instancesBean(Config.class);
         ProClassCache.init();
-        if(a[0].equals("1"))
+        if(a.length>=1)
         {
-            Config.dataserverId = "1";
-            Config.msgLisen = "1318";
-            Config.nameServerIp = "localhost";
-            Config.nameServerPort = "1317";
-            Config.fileServerPort = "1400";
-            Config.basePath = "/Users/criss/Desktop/file/name1/";
-        }
-        if(a[0].equals("2"))
-        {
-            Config.dataserverId = "2";
-            Config.msgLisen = "1319";
-            Config.nameServerIp = "localhost";
-            Config.nameServerPort = "1317";
-            Config.fileServerPort = "1401";
-            Config.basePath = "/Users/criss/Desktop/file/name2/";
+            if(a[0].equals("1"))
+            {
+                Config.dataserverId = "1";
+                Config.msgLisen = "1318";
+                Config.nameServerIp = "localhost";
+                Config.nameServerPort = "1317";
+                Config.fileServerPort = "1400";
+                Config.basePath = "/Users/criss/Desktop/file/name1/";
+            }
+            if(a[0].equals("2"))
+            {
+                Config.dataserverId = "2";
+                Config.msgLisen = "1319";
+                Config.nameServerIp = "localhost";
+                Config.nameServerPort = "1317";
+                Config.fileServerPort = "1401";
+                Config.basePath = "/Users/criss/Desktop/file/name2/";
+            }
         }
         //初始化Block
         BlockCache.initFromDisk();

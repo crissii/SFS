@@ -26,8 +26,8 @@ public class Config {
 
     public static String getBathPath()
     {
-        //return Path.getContextRealPath();
-        return basePath;
+        return Path.getContextRealPath();
+        //return basePath;
     }
 
 }

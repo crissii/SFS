@@ -22,8 +22,8 @@ public class Config {
     public static String getContextPath()
     {
         //System.out.println(Path.getContextRealPath());
-        //return Path.getContextRealPath();
-        return "/Users/criss/Desktop/file/nameserver/";
+        return Path.getContextRealPath();
+        //return "/Users/criss/Desktop/file/nameserver/";
     }
 
 }

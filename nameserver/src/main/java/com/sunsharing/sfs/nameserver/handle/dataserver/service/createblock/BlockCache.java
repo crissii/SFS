@@ -136,11 +136,14 @@ public class BlockCache {
 
             raf1 = new RandomAccessFile(blocksFiles,"rw");
             raf1.seek(blocksFiles.length());
+            //前四位blockId
             raf1.write(ByteUtils.intToBytes(blockId));
+            //20位DataServer
             for(int i=0;i<dataserverPad5.length;i++)
             {
                 raf1.write(ByteUtils.intToBytes(dataserverPad5[i]));
             }
+            //8为当前索引
             raf1.write(ByteUtils.longToBytes(0L));
             Block block = new Block();
             for(int i=0;i<dataserver.length;i++)
@@ -179,6 +182,7 @@ public class BlockCache {
             try
             {
                 raf1 = new RandomAccessFile(blocksFiles,"rw");
+                //前4位为BlockId
                 raf1.seek(4);
                 byte[] buffer = new byte[4];
                 while(raf1.read(buffer)!=-1)
@@ -190,8 +194,12 @@ public class BlockCache {
                         raf1.read(new byte[20]);
                         raf1.writeLong(currentIndex);
                         break;
+                    }else
+                    {
+                        raf1.read(new byte[28]);
                     }
-                    raf1.read(new byte[28]);
+                    //bug 干嘛要再读28?
+
                 }
             }catch (Exception e)
             {
