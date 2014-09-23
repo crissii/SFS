@@ -61,6 +61,7 @@ public class Server {
                     socket.getOutputStream().write("success".getBytes());
                 }else
                 {
+                    //全网同步
                     JSONObject obj = JSONObject.parseObject(result);
                     String baseName = obj.getString("baseName");
                     FileSyn syn = new FileSyn();

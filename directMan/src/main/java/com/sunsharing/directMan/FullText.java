@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.TermAttribute;
 import org.apache.lucene.document.Document;
@@ -65,10 +66,10 @@ public class FullText {
             logger.info("3");
         searcher.setSimilarity(new IKSimilarity());
         //String keyWords = "何鑫";
-
-        Query query = IKQueryParser.parse("source_name", keyword);
+         String r = splitWords(keyword);
+        Query query = IKQueryParser.parse("source_name", r);
         TopDocs topDocs = searcher.search(query, 100);
-            logger.info("4");
+         logger.info("4");
         System.out.println(topDocs.totalHits);
 
         ScoreDoc[] score = topDocs.scoreDocs;
@@ -170,7 +171,7 @@ public class FullText {
         doc.add(new Field("path", path, Field.Store.YES, Field.Index.NO));
         //indexWriter.addDocument(doc6);
 
-            indexWriter.addDocument(doc);
+        indexWriter.addDocument(doc);
 
        // System.out.println("add index。。。。。。。。。。。");
         }catch (Exception e)
@@ -199,6 +200,25 @@ public class FullText {
 //        TopDocs topDocs = searcher.search(query, Integer.MAX_VALUE);
 //        System.out.println(topDocs.totalHits);
 
+    }
+
+    private static String splitWords(String keyword) throws Exception
+    {
+        //String text="基于java语言开发的轻量级的中文分词工具包";
+        //创建分词对象
+        Analyzer anal=new IKAnalyzer(true);
+        StringReader reader=new StringReader(keyword);
+        //分词
+        TokenStream ts=anal.tokenStream("", reader);
+        CharTermAttribute term=ts.getAttribute(CharTermAttribute.class);
+        String result = "";
+        //遍历分词数据
+        while(ts.incrementToken())
+        {
+            result +=(term.toString()+" ");
+        }
+        reader.close();
+        return result;
     }
 
     public static void getPath(File f,List<String> list)

@@ -43,74 +43,74 @@ public class FileSyn {
 
         String bw = "{\"filePath\":\""+filePath+"\",\"action\":\"search\"}";
 
-        Socket s = new Socket("192.168.0.236",9009);
-
-        s.getOutputStream().write(bw.getBytes("UTF-8"));
-
-        InputStream input = s.getInputStream();
-
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(input, writer, "utf-8");
-        String result = writer.toString();
-
-        s.close();
-
-        JSONArray array = JSONArray.parseArray(result);
-
-        for(int i=0;i<array.size();i++)
-        {
-            JSONObject obj = array.getJSONObject(i);
-            boolean direct = obj.getBoolean("direct");
-            String source_name = obj.getString("source_name");
-            String dfs_name = obj.getString("dfs_name");
-            if(direct)
-            {
-                java.io.File f = new java.io.File(url+"/"+source_name);
-                if(!f.exists())
-                {
-                    f.mkdirs();
-                }
-                synDir(baseName, url+"/"+source_name);
-            }else
-            {
-                java.io.File f = new java.io.File(url+"/"+source_name);
-                if(!f.exists())
-                {
-                    final String path = url+"/"+source_name;
-                    final String final_dfs = dfs_name;
-                    Runnable run = new Runnable(){
-                        public void run()
-                        {
-                            java.io.File ff = new java.io.File(path);
-                            Request r = new Request();
-                            int k = path.lastIndexOf("/");
-                            String ptmp = path.substring(0,k);
-                            new java.io.File(ptmp).mkdirs();
-                            FileOutputStream out =null;
-                            try
-                            {
-                                 out = new FileOutputStream(ff);
-                                r.read(final_dfs,out,"192.168.0.169",1320,false);
-                            }catch (Exception e)
-                            {
-                                e.printStackTrace();
-                            }finally {
-                                try
-                                {
-                                    out.close();
-                                }catch (Exception e)
-                                {
-
-                                }
-                            }
-                        }
-                    };
-
-                    service.execute(run);
-
-                }
-            }
-        }
+//        Socket s = new Socket("192.168.0.236",9009);
+//
+//        s.getOutputStream().write(bw.getBytes("UTF-8"));
+//
+//        InputStream input = s.getInputStream();
+//
+//        StringWriter writer = new StringWriter();
+//        IOUtils.copy(input, writer, "utf-8");
+//        String result = writer.toString();
+//
+//        s.close();
+//
+//        JSONArray array = JSONArray.parseArray(result);
+//
+//        for(int i=0;i<array.size();i++)
+//        {
+//            JSONObject obj = array.getJSONObject(i);
+//            boolean direct = obj.getBoolean("direct");
+//            String source_name = obj.getString("source_name");
+//            String dfs_name = obj.getString("dfs_name");
+//            if(direct)
+//            {
+//                java.io.File f = new java.io.File(url+"/"+source_name);
+//                if(!f.exists())
+//                {
+//                    f.mkdirs();
+//                }
+//                synDir(baseName, url+"/"+source_name);
+//            }else
+//            {
+//                java.io.File f = new java.io.File(url+"/"+source_name);
+//                if(!f.exists())
+//                {
+//                    final String path = url+"/"+source_name;
+//                    final String final_dfs = dfs_name;
+//                    Runnable run = new Runnable(){
+//                        public void run()
+//                        {
+//                            java.io.File ff = new java.io.File(path);
+//                            Request r = new Request();
+//                            int k = path.lastIndexOf("/");
+//                            String ptmp = path.substring(0,k);
+//                            new java.io.File(ptmp).mkdirs();
+//                            FileOutputStream out =null;
+//                            try
+//                            {
+//                                 out = new FileOutputStream(ff);
+//                                //r.read(final_dfs,out,"192.168.0.169",1320,false);
+//                            }catch (Exception e)
+//                            {
+//                                e.printStackTrace();
+//                            }finally {
+//                                try
+//                                {
+//                                    out.close();
+//                                }catch (Exception e)
+//                                {
+//
+//                                }
+//                            }
+//                        }
+//                    };
+//
+//                    service.execute(run);
+//
+//                }
+//            }
+//        }
 
         java.io.File f = new java.io.File(url);
 
@@ -123,18 +123,18 @@ public class FileSyn {
                 if(tmp.isFile())
                 {
                     boolean exist =false;
-                    for(int j=0;j<array.size();j++)
-                    {
-                        JSONObject obj = (JSONObject)array.get(j);
-                        boolean direct = obj.getBoolean("direct");
-                        String source_name = obj.getString("source_name");
-                        String dfs_name = obj.getString("dfs_name");
-                        if(!direct && source_name.equals(tmp.getName()))
-                        {
-                            exist = true;
-                            break;
-                        }
-                    }
+//                    for(int j=0;j<array.size();j++)
+//                    {
+//                        JSONObject obj = (JSONObject)array.get(j);
+//                        boolean direct = obj.getBoolean("direct");
+//                        String source_name = obj.getString("source_name");
+//                        String dfs_name = obj.getString("dfs_name");
+//                        if(!direct && source_name.equals(tmp.getName()))
+//                        {
+//                            exist = true;
+//                            break;
+//                        }
+//                    }
                     if(!exist)
                     {
                         final String path = url+"/"+tmp.getName();
